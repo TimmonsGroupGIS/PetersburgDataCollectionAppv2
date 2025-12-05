@@ -447,13 +447,13 @@
                     }
                     
                     // Safety limits
-                    if (requestCount >= 40) {
+                    if (requestCount >= 50) {
                         console.log('Reached maximum request limit');
                         break;
                     }
-                    if (allImages.length >= 80000) {
-                        console.log('Reached maximum of 60,000 images');
-                        allImages = allImages.slice(0, 60000);
+                    if (allImages.length >= 100000) {
+                        console.log('Reached maximum of 100,000 images');
+                        allImages = allImages.slice(0, 100000);
                         break;
                     }
                 }

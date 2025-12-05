@@ -358,6 +358,9 @@
         const START_DATE = '2025-10-15T00:00:00Z';
         const END_DATE = '2025-11-07T00:00:00Z';
         
+        // ArcGIS API Key for basemap access
+        const ARCGIS_API_KEY = 'AAPTxy8BH1VEsoebNVZXo8HurAW-Ke5e6HB8U2esToHfha9ZsFhRdXoDR7OMWXBdrd2QlBM57lZw4SR_wOoFXgofIbVa310p-pxEA8Qhb-UDvaF5V3a5Aoa_tpRLHCth2iBoqg6hA-5F864hB1QX0qFVZ3rWhWHQSsm6zXppuI1E8g_mozLqZloMEZDS5oQWpIQoa_jMbzhGT41KWI4DiVoqSzH97l4ZBPZoGtorWIr0pWAyXDGhaCUzcNQDe_vBLMxErDLh3Q-8SiOOZ2QwjcPcMQ..AT1_J4ryQZdO';
+        
         let imageData = [];
         let isUpdatingFromMap = false;
         let fovOverlayVisible = false;
@@ -379,7 +382,7 @@
                     { id: 'osm', type: 'raster', source: 'osm' }
                 ]
             },
-            'esri-navigation': 'https://basemaps-api.arcgis.com/arcgis/rest/services/styles/ArcGIS:Navigation?type=style&token=',
+            'esri-navigation': `https://basemaps-api.arcgis.com/arcgis/rest/services/styles/ArcGIS:Navigation?type=style&token=${ARCGIS_API_KEY}`,
             'esri-satellite': {
                 version: 8,
                 sources: {
@@ -462,9 +465,15 @@
             if (typeof newStyle === 'string') {
                 try {
                     const response = await fetch(newStyle);
+                    if (!response.ok) {
+                        console.error('Error loading basemap:', response.status, response.statusText);
+                        alert('Could not load basemap. Please check your ArcGIS API key.');
+                        return;
+                    }
                     newStyle = await response.json();
                 } catch (err) {
                     console.error('Error loading basemap style:', err);
+                    alert('Could not load basemap. Please check your ArcGIS API key.');
                     return;
                 }
             }

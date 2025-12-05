@@ -379,22 +379,7 @@
                     { id: 'osm', type: 'raster', source: 'osm' }
                 ]
             },
-            'esri-navigation': {
-                version: 8,
-                sources: {
-                    'esri-navigation': {
-                        type: 'raster',
-                        tiles: [
-                            'https://basemaps-api.arcgis.com/arcgis/rest/services/styles/ArcGIS:Navigation/MapServer/tile/{z}/{y}/{x}',
-                        ],
-                        tileSize: 256,
-                        attribution: '© Esri'
-                    }
-                },
-                layers: [
-                    { id: 'esri-navigation-base', type: 'raster', source: 'esri-navigation' }
-                ]
-            },
+            'esri-navigation': 'https://basemaps-api.arcgis.com/arcgis/rest/services/styles/ArcGIS:Navigation?type=style&token=',
             'esri-satellite': {
                 version: 8,
                 sources: {
@@ -465,13 +450,24 @@
         });
 
         // Basemap selector event listener
-        document.getElementById('basemap-selector').addEventListener('change', (e) => {
+        document.getElementById('basemap-selector').addEventListener('change', async (e) => {
             const selectedBasemap = e.target.value;
-            const newStyle = basemapStyles[selectedBasemap];
+            let newStyle = basemapStyles[selectedBasemap];
             
             // Store current view
             const currentCenter = miniMap.getCenter();
             const currentZoom = miniMap.getZoom();
+            
+            // If it's a URL string (vector tiles), fetch the style
+            if (typeof newStyle === 'string') {
+                try {
+                    const response = await fetch(newStyle);
+                    newStyle = await response.json();
+                } catch (err) {
+                    console.error('Error loading basemap style:', err);
+                    return;
+                }
+            }
             
             // Set new style
             miniMap.setStyle(newStyle);
